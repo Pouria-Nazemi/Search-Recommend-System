@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 import urllib.parse
 import sys
 from elasticsearch import Elasticsearch
-
+from urllib.parse import quote
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
@@ -110,15 +110,19 @@ def recommand():
     if request.method == 'POST':
         search_term = request.form.get('searchTerm')
         num_recommendations = int(request.form.get('numRecommendations'))
-        recommendations = recommend(search_term, num_recommendations)
+        recommendations = recommend(search_term, num_recommendations + 1)
         if(len(recommendations)==0):
             return
         kqlQuery = ""
         for i, title in enumerate(recommendations):
-            kqlQuery += '"title" : '  
+            if (title == ""):
+                continue
+            kqlQuery += '("title":'  
             kqlQuery += f'"{title}"'
             if i != len(recommendations) - 1:
-                kqlQuery += ' OR ' 
+                kqlQuery += ') OR ' 
+            else:
+                kqlQuery += ')'
 
         
         querySegment = f"&_a=(query:(language:lucene,query:'({kqlQuery})'))"
