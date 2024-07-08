@@ -115,17 +115,17 @@ def recommand():
             return
         kqlQuery = ""
         for i, title in enumerate(recommendations):
-            if (title == ""):
+            if not title.strip(): 
                 continue
-            kqlQuery += '("title":'  
-            kqlQuery += f'"{title}"'
+            # Escape the ':' character in the title
+            escaped_title = title.replace(':', ' ')
+            kqlQuery += f'title:"{escaped_title}"'
             if i != len(recommendations) - 1:
-                kqlQuery += ') OR ' 
-            else:
-                kqlQuery += ')'
+                kqlQuery += ' OR '
 
-        
-        querySegment = f"&_a=(query:(language:lucene,query:'({kqlQuery})'))"
+
+        encoded_query = quote(kqlQuery)
+        querySegment = f"&_a=(query:(language:lucene,query:'({encoded_query})'))"
         print(querySegment)
         full_kibana_url = f"{baseUrl}{querySegment}"
         
