@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kibana Query Interface</title>
+</head>
+<body>
+    <h1>Search Interface for Kibana Dashboard</h1>
+
+    <form action="/rs" method="post">
+        <label for="searchTerm">Title or DOI:</label>
+        <input type="text" id="searchTerm" name="searchTerm">
+        <label for="numRecommendations">Number of Recommendations:</label>
+        <input type="number" id="numRecommendations" name="numRecommendations">
+        <button type="submit">Search</button>
+    </form>
+
+    <div id="recommendedTitles">
+        {% for title in recommendations %}
+            <p>{{ title }}</p>
+        {% endfor %}
+    </div>
+
+    <iframe id="kibanaDashboard" src="{{baseUrl}}" height="600" width="1900"></iframe>
+
+    <script>
+    </script>
+</body>
+</html>
+

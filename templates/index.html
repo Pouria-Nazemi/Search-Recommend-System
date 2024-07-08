@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kibana Query Interface</title>
+    <style>
+        /* Your CSS styles here */
+    </style>
+</head>
+<body>
+    <h1>Search Engine Interface For Blockchain Articles </h1>
+
+    <form onsubmit="event.preventDefault(); updateDashboard();">
+        <!-- First Text Field and Dropdown -->
+        <label for="text1">Search Term 1:</label>
+        <input type="text" id="text1" name="text1">
+        <select id="dropdown1" name="dropdown1">
+            <option value="all_metadata">All Metadata</option>
+            <option value="title">Title</option>
+            <option value="abstract">Abstract</option>
+            <option value="DOI">DOI</option>
+            <option value="Published In">Published in</option>
+            <option value="Publisher">Publisher</option>
+        </select>
+        <br><br>
+
+        <!-- AND, OR, NOT Dropdown -->
+        <select id="operator" name="operator">
+            <option value="and">AND</option>
+            <option value="or">OR</option>
+            <option value="not">NOT</option>
+        </select>
+        <br><br>
+
+        <!-- Second Text Field and Dropdown -->
+        <label for="text2">Search Term 2:</label>
+        <input type="text" id="text2" name="text2">
+        <select id="dropdown2" name="dropdown2">
+            <option value="all_metadata">All Metadata</option>
+            <option value="title">Title</option>
+            <option value="abstract">Abstract</option>
+            <option value="DOI">DOI</option>
+            <option value="Published In">Published in</option>
+            <option value="Publisher">Publisher</option>
+        </select>
+        <br><br>
+
+        <!-- Submit Button -->
+        <button type="submit">Search</button>
+    </form>
+
+    <br>
+    <br>
+
+    <iframe id="kibanaDashboard" src="{{ baseUrl }}" height="600" width="1900"></iframe>
+
+    <script>
+        function updateDashboard() {
+            // Get form values
+            const text1 = document.getElementById('text1').value;
+            const dropdown1 = document.getElementById('dropdown1').value;
+            const operator = document.getElementById('operator').value.toUpperCase();
+            const text2 = document.getElementById('text2').value;
+            const dropdown2 = document.getElementById('dropdown2').value;
+
+            // Create KQL query
+            let kqlQuery = '';
+
+            if (text1) {
+                kqlQuery += `${dropdown1 !== 'all_metadata' ? dropdown1 + ':' : ''} "${text1}" `;
+            }
+
+            if (text1 && text2) {
+                kqlQuery += `${operator} `;
+            }
+
+            if (text2) {
+                kqlQuery += `${dropdown2 !== 'all_metadata' ? dropdown2 + ':' : ''} "${text2}"`;
+            }
+            // Constructing the query URL segment
+            const querySegment = `&_a=(query:(language:lucene,query:'${encodeURIComponent(kqlQuery)}'))`;
+            // Full URL for the iframe
+            const fullUrl = "{{ baseUrl | e }}" + querySegment;
+            document.getElementById("kibanaDashboard").src = fullUrl;
+        }
+    </script>
+</body>
+</html>
+
